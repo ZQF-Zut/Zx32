@@ -1,6 +1,7 @@
 -- project
-set_project("Wx32")
-set_xmakever("2.8.2")
+set_project("wx32")
+set_xmakever("2.8.9")
+set_description("a win32 api wrapper using utf-8 and modern c++")
 
 -- language
 set_warnings("all")
@@ -46,7 +47,7 @@ rule("module")
     end)
 
 -- targets
-target("Wx32")
+target("wx32")
     set_kind("$(kind)")
     add_syslinks("user32")
     add_files("src/*.cpp")
@@ -56,8 +57,8 @@ target("Wx32")
     add_headerfiles("include/Wx32/Private/*.h")
     add_rules("module")
     
-target("Wx32-Test")
+target("wx32-test")
     set_default(false)
     set_kind("binary")
     add_files("test/main.cpp")
-    add_deps("Wx32")
+    add_deps("wx32")
