@@ -1,0 +1,31 @@
+{
+    // cpp config
+    "[cpp]": {
+        "editor.inlayHints.enabled": "off",
+        "editor.formatOnSave": true,
+        "editor.formatOnPaste": false,
+        "editor.defaultFormatter": "llvm-vs-code-extensions.vscode-clangd"
+    },
+    // c config
+    "[c]": {
+        "editor.inlayHints.enabled": "off",
+        "editor.formatOnSave": true,
+        "editor.formatOnPaste": false,
+        "editor.defaultFormatter": "llvm-vs-code-extensions.vscode-clangd"
+    },
+    // clangd config
+    "clangd.arguments": [
+        "--background-index",
+        "-j=16",
+        "--clang-tidy",
+        "--clang-tidy-checks=cppcoreguidelines-*,performance-*,bugprone-*,portability-*,modernize-*,google-*",
+        "--all-scopes-completion",
+        "--completion-style=detailed",
+        "--header-insertion=iwyu",
+        "-compile-commands-dir=.vscode"
+    ],
+    // lldb
+    "lldb.displayFormat": "hex",
+    // xmake
+    "xmake.debugConfigType": "codelldb"
+}

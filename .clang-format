@@ -1,0 +1,11 @@
+BasedOnStyle: Microsoft
+
+Language: Cpp
+ColumnLimit: 0
+PointerAlignment: Left
+Cpp11BracedListStyle: false
+AlignAfterOpenBracket: AlwaysBreak
+AllowShortLoopsOnASingleLine: true
+AllowShortBlocksOnASingleLine: true
+AllowShortFunctionsOnASingleLine: true
+AllowShortIfStatementsOnASingleLine: true
