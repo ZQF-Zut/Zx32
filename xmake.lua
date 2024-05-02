@@ -13,19 +13,8 @@ set_allowedplats("windows")
 set_allowedarchs("x86", "x64")
 set_allowedmodes("debug", "release")
 
+-- rules
 add_rules("mode.debug", "mode.release")
-
--- msvc runtime settings
-if is_mode("release") then
-    if is_plat("windows") then
-        set_runtimes("MT")
-    end
-    set_policy("build.optimization.lto", true)
-elseif is_mode("debug") then
-    if is_plat("windows") then
-        set_runtimes("MDd")
-    end
-end
 
 -- defines
 add_defines("WIN32_LEAN_AND_MEAN")
