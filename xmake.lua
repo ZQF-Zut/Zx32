@@ -22,7 +22,7 @@ add_defines("WIN32_LEAN_AND_MEAN")
 -- targets
 target("wx32")
     set_kind("$(kind)")
-    add_syslinks("user32")
+    add_links("user32")
     add_files("src/*.cpp")
     add_files("src/Private/*.cpp")
     add_includedirs("include", {public = true})
