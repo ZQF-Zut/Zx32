@@ -30,22 +30,6 @@ end
 -- defines
 add_defines("WIN32_LEAN_AND_MEAN")
 
--- rules
-rule("module")
-    on_load(function (target)
-        if is_mode("debug") then
-            target:set("kind", "shared")
-            if target:is_plat("windows") then
-                import("core.project.rule")
-                local rule = rule.rule("utils.symbols.export_all")
-                target:rule_add(rule)
-                target:extraconf_set("rules", "utils.symbols.export_all", {export_classes = true})
-            end
-        elseif is_mode("release") then
-            target:set("kind", "static")
-        end
-    end)
-
 -- targets
 target("wx32")
     set_kind("$(kind)")
@@ -54,7 +38,6 @@ target("wx32")
     add_files("src/Private/*.cpp")
     add_includedirs("include", {public = true})
     add_headerfiles("include/(**.h)")
-    add_rules("module")
     
 target("wx32-test")
     set_default(false)
