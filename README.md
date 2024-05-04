@@ -28,8 +28,9 @@ modify `hello_wx32/xmake.lua`
 ```lua
 -- add
 add_repositories("Drepo https://github.com/Dir-A/Drepo.git")
--- add
 add_requires("wx32")
+set_languages("c++20")
+set_encodings("utf-8") -- msvc: /utf-8
 
 add_rules("mode.debug", "mode.release")
 
@@ -50,7 +51,7 @@ using namespace std;
 int main(int argc, char** argv)
 {
     // add
-    Wx32::API::MessageBoxU8(nullptr, Wx32::Utils::ForceU8Str(u8"wx32!"), Wx32::Utils::ForceU8Str(u8"hello"), MB_OK);
+    Wx32::API::MessageBoxU8(nullptr, "wx32😋", "hello🥳", MB_OK);
     cout << "hello world!" << endl;
     return 0;
 }
