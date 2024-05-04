@@ -36,9 +36,9 @@ auto GetCurrentDirectoryU8() -> MbcsStr_t
     return Utils::ApiStrCvt({ buffer.get(), real_chars });
 }
 
-auto CreateFileU8(const std::string_view& u8FilePath, size_t dwDesiredAccess, size_t dwShareMode, LPSECURITY_ATTRIBUTES lpSecurityAttributes, size_t dwCreationDisposition, size_t dwFlagsAndAttributes, HANDLE hTemplateFile) -> std::optional<HANDLE>
+auto CreateFileU8(const std::string_view& u8FilePath, const CreateFileProperties& proObj) -> std::optional<HANDLE>
 {
-    HANDLE hfile = ::CreateFileW(Utils::ApiStrCvt(u8FilePath).first.data(), static_cast<DWORD>(dwDesiredAccess), static_cast<DWORD>(dwShareMode), lpSecurityAttributes, static_cast<DWORD>(dwCreationDisposition), static_cast<DWORD>(dwFlagsAndAttributes), hTemplateFile);
+    HANDLE hfile = ::CreateFileW(Utils::ApiStrCvt(u8FilePath).first.data(), static_cast<DWORD>(proObj.dwDesiredAccess), static_cast<DWORD>(proObj.dwShareMode), proObj.lpSecurityAttributes, static_cast<DWORD>(proObj.dwCreationDisposition), static_cast<DWORD>(proObj.dwFlagsAndAttributes), proObj.hTemplateFile);
     if (hfile == INVALID_HANDLE_VALUE) { return std::nullopt; }
     return hfile;
 }

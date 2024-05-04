@@ -1,3 +1,4 @@
+#include "Wx32/Private/WxKernel32.h"
 #include "Wx32/Utils.h"
 #include <Wx32/APIs.h>
 
@@ -46,7 +47,7 @@ auto main() -> int
     Wx32::API::MessageBoxU8(nullptr, Wx32::Utils::ForceU8Str(u8"获取程序当前目录"), Wx32::API::GetCurrentDirectoryU8().first.data(), MB_OK);
     Wx32::API::MessageBoxU8(nullptr, Wx32::Utils::ForceU8Str(u8"获取程序当前路径"), Wx32::API::GetModuleFileNameU8(nullptr).first.data(), MB_OK);
 
-    HANDLE hfile = Wx32::API::CreateFileU8(Wx32::Utils::ForceU8Str(u8"1.txt"), GENERIC_WRITE | GENERIC_READ, FILE_SHARE_READ, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr).value();
+    HANDLE hfile = Wx32::API::CreateFileU8(Wx32::Utils::ForceU8Str(u8"1.txt"), { GENERIC_WRITE | GENERIC_READ, FILE_SHARE_READ, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr }).value();
     std::string_view write_str = Wx32::Utils::ForceU8Str(u8"asjfgauifuiwf,测试写入输入");
     Wx32::API::WriteFile(hfile, { reinterpret_cast<const uint8_t*>(write_str.data()), write_str.size() }, nullptr);
     std::array<uint8_t, 33> buffer{};
