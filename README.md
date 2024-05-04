@@ -26,32 +26,28 @@ a win32 api wrapper using utf-8 and modern c++
 
 modify `hello_wx32/xmake.lua`
 ```lua
--- add
-add_repositories("Drepo https://github.com/Dir-A/Drepo.git")
-add_requires("wx32")
-set_languages("c++20")
-set_encodings("utf-8") -- msvc: /utf-8
+add_repositories("Drepo https://github.com/Dir-A/Drepo.git") -- add
+add_requires("wx32") -- add
+set_languages("c++20") -- add
+set_encodings("utf-8") -- add
 
 add_rules("mode.debug", "mode.release")
 
 target("hello_wx32")
-    -- add
-    add_packages("wx32")
+    add_packages("wx32") -- add
     set_kind("binary")
     add_files("src/*.cpp")
 ```
 modify `hello_wx32/src/main.cpp`
 ```c++
 #include <iostream>
-// add
-#include <Wx32/APIs.h>
+#include <Wx32/APIs.h> // add
 
 using namespace std;
 
 int main(int argc, char** argv)
 {
-    // add
-    Wx32::API::MessageBoxU8(nullptr, "wx32😋", "hello🥳", MB_OK);
+    Wx32::API::MessageBoxU8(nullptr, "wx32😋", "hello🥳", MB_OK); // add
     cout << "hello world!" << endl;
     return 0;
 }
