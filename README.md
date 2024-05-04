@@ -34,7 +34,7 @@ set_encodings("utf-8") -- msvc: /utf-8
 
 add_rules("mode.debug", "mode.release")
 
-target("hello")
+target("hello_wx32")
     -- add
     add_packages("wx32")
     set_kind("binary")
