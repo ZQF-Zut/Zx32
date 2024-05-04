@@ -4,7 +4,7 @@ a win32 api wrapper using utf-8 and modern c++
 ## Build
 - xmake
 ```shell
-> git clone https://github.com/Dir-A/Wx32.git
+> git clone --depth 1 https://github.com/Dir-A/Wx32.git
 > cd Wx32
 
 -- build static --
