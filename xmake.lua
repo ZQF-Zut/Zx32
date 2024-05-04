@@ -22,7 +22,12 @@ add_defines("WIN32_LEAN_AND_MEAN")
 -- targets
 target("wx32")
     set_kind("$(kind)")
-    add_links("user32")
+    if is_plat("windows") then
+        if is_kind("shared") then
+            add_rules("utils.symbols.export_all", {export_classes = true})
+        end
+    end
+    add_syslinks("user32")
     add_files("src/*.cpp")
     add_files("src/Private/*.cpp")
     add_includedirs("include", {public = true})
