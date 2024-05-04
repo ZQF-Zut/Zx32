@@ -27,5 +27,5 @@
     // lldb
     "lldb.displayFormat": "hex",
     // xmake
-    "xmake.debugConfigType": "codelldb"
+    // "xmake.debugConfigType": "codelldb"
 }

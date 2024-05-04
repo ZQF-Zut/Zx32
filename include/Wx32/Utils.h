@@ -5,9 +5,16 @@
 #include <memory>
 #include <string_view>
 
-
 namespace Wx32
 {
+enum class CodePage
+{
+    DEF = 0,
+    GBK = 936,
+    SJIS = 932,
+    UTF8 = 65001
+};
+
 using MbcsStr_t = std::pair<std::string_view, std::unique_ptr<char[]>>;
 using WideStr_t = std::pair<std::wstring_view, std::unique_ptr<wchar_t[]>>;
 
@@ -45,6 +52,9 @@ namespace Wx32::Utils
 {
 auto StrCvtU8ToU16(const std::string_view& u8Str) -> WideStr_t;
 auto StrCvtU16ToU8(const std::wstring_view& u16Str) -> MbcsStr_t;
+
+auto StrCvtToMbcs(const std::wstring_view& wsStr, const CodePage eCodePage) noexcept -> MbcsStr_t;
+auto StrCvtToWide(const std::string_view& msStr, const CodePage eCodePage) noexcept -> WideStr_t;
 
 auto PathStrCvtU8ToU16(const std::string_view& u8Str, U16PathBuffer& sfU16Buffer) -> std::wstring_view;
 auto PathStrCvtU16ToU8(const std::wstring_view& u16Str, U8PathBuffer& sfU8Buffer) -> std::string_view;
