@@ -166,6 +166,6 @@ auto StrCvt(const std::string_view& msStr, const CodePage eCodePage) noexcept ->
 
 auto ForceU8Str(const std::u8string_view& msStr) -> std::string_view
 {
-    return reinterpret_cast<const char*>(msStr.data());
+    return { reinterpret_cast<const char*>(msStr.data()), msStr.size() };
 }
 } // namespace Wx32::Utils
