@@ -1,7 +1,7 @@
 # Wx32
 a win32 api wrapper using utf-8 and modern c++
 
-## Use Guide
+## User Guide
 ### Xmake
 ```lua
 add_repositories("Drepo https://github.com/Dir-A/Drepo.git")
