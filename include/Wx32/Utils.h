@@ -50,12 +50,24 @@ using U16PathBuffer = PathBufferBased<wchar_t>;
 
 namespace Wx32::Utils
 {
-auto StrCvtU8ToU16(const std::string_view& u8Str) -> WideStr_t;
-auto StrCvtU16ToU8(const std::wstring_view& u16Str) -> MbcsStr_t;
+// cvt utf8-string to utf16-string with allocting memory (heap memory)
+auto ApiStrCvt(const std::string_view& u8Str) -> WideStr_t;
 
-auto StrCvtToMbcs(const std::wstring_view& wsStr, const CodePage eCodePage) noexcept -> MbcsStr_t;
-auto StrCvtToWide(const std::string_view& msStr, const CodePage eCodePage) noexcept -> WideStr_t;
+// cvt utf16-string to utf8-string with allocting memory (heap memory)
+auto ApiStrCvt(const std::wstring_view& u16Str) -> MbcsStr_t;
 
-auto PathStrCvtU8ToU16(const std::string_view& u8Str, U16PathBuffer& sfU16Buffer) -> std::wstring_view;
-auto PathStrCvtU16ToU8(const std::wstring_view& u16Str, U8PathBuffer& sfU8Buffer) -> std::string_view;
+// cvt utf8-string to utf16-string without allocting memory (stack memory or temp buffer)
+auto ApiStrCvt(const std::string_view& u8Str, U16PathBuffer& sfU16Buffer) -> std::wstring_view;
+
+// cvt utf16-string to utf8-string without allocting memory (stack memory or temp buffer)
+auto ApiStrCvt(const std::wstring_view& u16Str, U8PathBuffer& sfU8Buffer) -> std::string_view;
+
+// cvt wide-string to multibyte-string
+auto StrCvt(const std::wstring_view& wsStr, const CodePage eCodePage) noexcept -> MbcsStr_t;
+
+// cvt multibyte-string to wide-string
+auto StrCvt(const std::string_view& msStr, const CodePage eCodePage) noexcept -> WideStr_t;
+
+// u8string to string
+auto ForceU8Str(const std::u8string_view& msStr) -> std::string_view;
 } // namespace Wx32::Utils

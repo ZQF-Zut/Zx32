@@ -14,7 +14,7 @@ auto GetModuleFileNameU8(HMODULE hModule) -> MbcsStr_t
         written_chars = ::GetModuleFileNameW(hModule, buffer.get(), buffer_max_chars);
     } while (written_chars >= buffer_max_chars);
 
-    return Utils::StrCvtU16ToU8({ buffer.get(), written_chars });
+    return Utils::ApiStrCvt({ buffer.get(), written_chars });
 }
 
 auto GetCurrentDirectoryU8() -> MbcsStr_t
@@ -33,12 +33,12 @@ auto GetCurrentDirectoryU8() -> MbcsStr_t
         real_chars = ::GetCurrentDirectoryW(buffer_max_chars, buffer.get());
     }
 
-    return Utils::StrCvtU16ToU8({ buffer.get(), real_chars });
+    return Utils::ApiStrCvt({ buffer.get(), real_chars });
 }
 
 auto CreateFileU8(const std::string_view& u8FilePath, size_t dwDesiredAccess, size_t dwShareMode, LPSECURITY_ATTRIBUTES lpSecurityAttributes, size_t dwCreationDisposition, size_t dwFlagsAndAttributes, HANDLE hTemplateFile) -> std::optional<HANDLE>
 {
-    HANDLE hfile = ::CreateFileW(Utils::StrCvtU8ToU16(u8FilePath).first.data(), static_cast<DWORD>(dwDesiredAccess), static_cast<DWORD>(dwShareMode), lpSecurityAttributes, static_cast<DWORD>(dwCreationDisposition), static_cast<DWORD>(dwFlagsAndAttributes), hTemplateFile);
+    HANDLE hfile = ::CreateFileW(Utils::ApiStrCvt(u8FilePath).first.data(), static_cast<DWORD>(dwDesiredAccess), static_cast<DWORD>(dwShareMode), lpSecurityAttributes, static_cast<DWORD>(dwCreationDisposition), static_cast<DWORD>(dwFlagsAndAttributes), hTemplateFile);
     if (hfile == INVALID_HANDLE_VALUE) { return std::nullopt; }
     return hfile;
 }
@@ -70,38 +70,38 @@ auto SetFilePointerEx(HANDLE hFile, uint64_t nOffset, size_t dwMoveMethod) -> st
 
 auto CreateDirectoryU8(const std::string_view& u8DirName, LPSECURITY_ATTRIBUTES lpSecurityAttributes) -> bool
 {
-    return ::CreateDirectoryW(Utils::StrCvtU8ToU16(u8DirName).first.data(), lpSecurityAttributes) == TRUE;
+    return ::CreateDirectoryW(Utils::ApiStrCvt(u8DirName).first.data(), lpSecurityAttributes) == TRUE;
 }
 
 auto RemoveDirectoryU8(const std::string_view& u8DirName) -> bool
 {
-    return ::RemoveDirectoryW(Utils::StrCvtU8ToU16(u8DirName).first.data()) == TRUE;
+    return ::RemoveDirectoryW(Utils::ApiStrCvt(u8DirName).first.data()) == TRUE;
 }
 
 auto GetFileAttributesU8(const std::string_view& u8Path) -> size_t
 {
-    return ::GetFileAttributesW(Utils::StrCvtU8ToU16(u8Path).first.data());
+    return ::GetFileAttributesW(Utils::ApiStrCvt(u8Path).first.data());
 }
 
 auto DeleteFileU8(const std::string_view& u8FilePath) -> bool
 {
-    return ::DeleteFileW(Utils::StrCvtU8ToU16(u8FilePath).first.data()) == TRUE;
+    return ::DeleteFileW(Utils::ApiStrCvt(u8FilePath).first.data()) == TRUE;
 }
 
 auto CopyFileU8(const std::string_view& u8ExistFilePath, const std::string_view& u8NewFilePath, bool bFailIfExists) -> bool
 {
-    return ::CopyFileW(Utils::StrCvtU8ToU16(u8ExistFilePath).first.data(), Utils::StrCvtU8ToU16(u8NewFilePath).first.data(), bFailIfExists ? TRUE : FALSE) == TRUE;
+    return ::CopyFileW(Utils::ApiStrCvt(u8ExistFilePath).first.data(), Utils::ApiStrCvt(u8NewFilePath).first.data(), bFailIfExists ? TRUE : FALSE) == TRUE;
 }
 
 auto MoveFileU8(const std::string_view& u8ExistFilePath, const std::string_view& u8NewFilePath) -> bool
 {
-    return ::MoveFileW(Utils::StrCvtU8ToU16(u8ExistFilePath).first.data(), Utils::StrCvtU8ToU16(u8NewFilePath).first.data()) == TRUE;
+    return ::MoveFileW(Utils::ApiStrCvt(u8ExistFilePath).first.data(), Utils::ApiStrCvt(u8NewFilePath).first.data()) == TRUE;
 }
 
 auto WriteConsoleU8(HANDLE hConsoleOutput, const std::string_view& u8Text, void* lpReserved) -> std::optional<size_t>
 {
     DWORD written{};
-    auto text_wstr = Utils::StrCvtU8ToU16(u8Text);
+    auto text_wstr = Utils::ApiStrCvt(u8Text);
     bool status = (::WriteConsoleW(hConsoleOutput, text_wstr.first.data(), static_cast<DWORD>(text_wstr.first.size()), &written, lpReserved) == TRUE);
     if (!status) { return std::nullopt; }
     return static_cast<size_t>(written);
