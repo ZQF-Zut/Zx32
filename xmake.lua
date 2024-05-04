@@ -18,6 +18,11 @@ add_rules("mode.debug", "mode.release")
 
 -- defines
 add_defines("WIN32_LEAN_AND_MEAN")
+if is_mode("releasedbg") or is_mode("release") then
+    if is_plat("windows") then
+        set_policy("build.optimization.lto", true)
+    end
+end
 
 -- targets
 target("wx32")
@@ -32,7 +37,7 @@ target("wx32")
     add_files("src/Private/*.cpp")
     add_includedirs("include", {public = true})
     add_headerfiles("include/(**.h)")
-    
+
 target("wx32-test")
     set_default(false)
     set_kind("binary")
