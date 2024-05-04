@@ -40,16 +40,11 @@ target("hello_wx32")
 ```
 modify `hello_wx32/src/main.cpp`
 ```c++
-#include <iostream>
-#include <Wx32/APIs.h> // add
+#include <Wx32/APIs.h>
 
-using namespace std;
-
-int main(int argc, char** argv)
+auto main() -> int
 {
-    Wx32::API::MessageBoxU8(nullptr, "wx32😋", "hello🥳", MB_OK); // add
-    cout << "hello world!" << endl;
-    return 0;
+    Wx32::API::MessageBoxU8(nullptr, "wx32😋", "hello🥳", MB_OK);
 }
 ```
 build and run
