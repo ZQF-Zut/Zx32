@@ -9,12 +9,12 @@ a win32 api wrapper using utf-8 and modern c++
 
 -- build static --
 > xmake config -k static
-> xmake build
+> xmake build -y
 > xmake install -o out_dir_static wx32
 
 -- build shared --
 > xmake config -k shared
-> xmake build
+> xmake build -y
 > xmake install -o out_dir_shared wx32
 ```
 
@@ -50,13 +50,13 @@ using namespace std;
 int main(int argc, char** argv)
 {
     // add
-    Wx32::API::MessageBoxU8(nullptr, Wx32::Utils::ForceU8Str(u8"123"), Wx32::Utils::ForceU8Str(u8"123"), MB_OK);
+    Wx32::API::MessageBoxU8(nullptr, Wx32::Utils::ForceU8Str(u8"wx32!"), Wx32::Utils::ForceU8Str(u8"hello"), MB_OK);
     cout << "hello world!" << endl;
     return 0;
 }
 ```
 build and run
 ```shell
-> xmake -y
+> xmake build -y
 > xmake run
 ```
