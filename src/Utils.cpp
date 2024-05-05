@@ -29,8 +29,7 @@ auto StrCvtForce(const std::string_view& u8Str, std::span<wchar_t> spBuffer, con
 {
     if (u8Str.empty()) { return { L"", 0 }; }
     const auto char_count = static_cast<size_t>(::MultiByteToWideChar(static_cast<UINT>(eCodePage), MB_ERR_INVALID_CHARS, u8Str.data(), static_cast<int>(u8Str.size()), spBuffer.data(), static_cast<int>(spBuffer.size())));
-    if (char_count == 0) { return { L"", 0 }; }
-    if (char_count >= spBuffer.size()) { throw std::runtime_error("ApiStrCvt: buffer too small"); }
+    if ((char_count == 0) || (char_count >= spBuffer.size())) { throw std::runtime_error("ApiStrCvt: buffer too small"); }
     spBuffer[char_count] = {};
     return { spBuffer.data(), char_count };
 }
@@ -39,15 +38,14 @@ auto StrCvtForce(const std::wstring_view& u16Str, std::span<char> spBuffer, cons
 {
     if (u16Str.empty()) { return { "", 0 }; }
     const auto bytes = static_cast<size_t>(::WideCharToMultiByte(static_cast<UINT>(eCodePage), 0, reinterpret_cast<const wchar_t*>(u16Str.data()), static_cast<int>(u16Str.size()), spBuffer.data(), static_cast<int>(spBuffer.size()), nullptr, nullptr));
-    if (bytes == 0) { return { "", 0 }; }
-    if (bytes >= spBuffer.size()) { throw std::runtime_error("ApiStrCvt: buffer too small"); }
+    if ((bytes == 0) || (bytes >= spBuffer.size())) { throw std::runtime_error("ApiStrCvt: buffer too small"); }
     spBuffer[bytes] = {};
     return { spBuffer.data(), bytes };
 }
 
-auto StrCvt(const std::wstring_view& wsStr, const CodePage eCodePage) noexcept -> MbcsStr_t
+auto StrCvtSafe(const std::wstring_view& wsStr, const CodePage eCodePage) -> MbcsStr_t
 {
-    auto fn_warning_log = [&wsStr](const std::wstring_view& wsReason) {
+    auto fn_warning_log = [&wsStr](const std::wstring_view wsReason) {
         DWORD written{};
         const HANDLE handle = ::GetStdHandle(STD_ERROR_HANDLE);
         ::WriteConsoleW(handle, wsReason.data(), static_cast<DWORD>(wsReason.size()), &written, nullptr);
@@ -78,10 +76,10 @@ auto StrCvt(const std::wstring_view& wsStr, const CodePage eCodePage) noexcept -
     return { std::string_view{ buffer_ptr.get(), bytes_real }, std::move(buffer_ptr) };
 }
 
-auto StrCvt(const std::string_view& msStr, const CodePage eCodePage) noexcept -> WideStr_t
+auto StrCvtSafe(const std::string_view& msStr, const CodePage eCodePage) -> WideStr_t
 {
     // warning log func, print error msg/text to console via sys api
-    auto fn_warning_log = [&msStr](const std::string_view& msReason) {
+    auto fn_warning_log = [&msStr](const std::string_view msReason) {
         DWORD written{};
         const HANDLE handle = ::GetStdHandle(STD_ERROR_HANDLE);
         ::WriteConsoleA(handle, msReason.data(), static_cast<DWORD>(msReason.size()), &written, nullptr);
@@ -132,6 +130,16 @@ auto ApiStrCvt(const std::wstring_view& u16Str) -> MbcsStr_t
 auto ApiStrCvt(const std::string_view& u8Str) -> WideStr_t
 {
     return StrCvtForce(u8Str, CodePage::UTF8);
+}
+
+auto ApiStrCvt(const std::string_view& u8Str, std::span<wchar_t> spBuffer) -> std::wstring_view
+{
+    return StrCvtForce(u8Str, spBuffer, CodePage::UTF8);
+}
+
+auto ApiStrCvt(const std::wstring_view& u16Str, std::span<char> spBuffer) -> std::string_view
+{
+    return StrCvtForce(u16Str, spBuffer, CodePage::UTF8);
 }
 
 auto ForceU8Str(const std::u8string_view& msStr) -> std::string_view
