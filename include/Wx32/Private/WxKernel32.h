@@ -3,24 +3,11 @@
 #include <optional>
 #include <span>
 
-namespace Wx32
-{
-struct CreateFileProperties
-{
-    size_t dwDesiredAccess;
-    size_t dwShareMode;
-    LPSECURITY_ATTRIBUTES lpSecurityAttributes;
-    size_t dwCreationDisposition;
-    size_t dwFlagsAndAttributes;
-    HANDLE hTemplateFile;
-};
-} // namespace Wx32
-
 namespace Wx32::Kernel32
 {
 auto GetModuleFileNameU8(HMODULE hModule) -> MbcsStr_t;
 auto GetCurrentDirectoryU8() -> MbcsStr_t;
-auto CreateFileU8(const std::string_view& u8FilePath, const CreateFileProperties& proObj) -> std::optional<HANDLE>;
+auto CreateFileU8(const std::string_view& u8FilePath, size_t dwDesiredAccess, size_t dwShareMode, LPSECURITY_ATTRIBUTES lpSecurityAttributes, size_t dwCreationDisposition, size_t dwFlagsAndAttributes, HANDLE hTemplateFile) -> std::optional<HANDLE>;
 auto WriteFile(HANDLE hFile, std::span<const uint8_t> spData, LPOVERLAPPED lpOverlapped) -> std::optional<size_t>;
 auto ReadFile(HANDLE hFile, std::span<uint8_t> spBuffer, LPOVERLAPPED lpOverlapped) -> std::optional<size_t>;
 auto SetFilePointerEx(HANDLE hFile, uint64_t nOffset, size_t dwMoveMethod) -> std::optional<uint64_t>;
