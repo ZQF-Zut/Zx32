@@ -1,5 +1,3 @@
-#include "Wx32/Private/WxKernel32.h"
-#include "Wx32/Utils.h"
 #include <Wx32/APIs.h>
 
 static auto TestStr()
@@ -57,6 +55,6 @@ auto main() -> int
     std::string_view read_str = { reinterpret_cast<char*>(buffer.data()), buffer.size() - 1 };
     if (read_str == write_str)
     {
-        Wx32::API::WriteConsoleU8(::GetStdHandle(STD_OUTPUT_HANDLE), Wx32::Utils::ForceU8Str(u8"Equal\n"), nullptr);
+        Wx32::API::WriteConsoleU8(::GetStdHandle(STD_OUTPUT_HANDLE), Wx32::Utils::ForceU8Str(u8"Equal"), nullptr);
     }
 }

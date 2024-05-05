@@ -3,6 +3,7 @@
 #include <array>
 #include <cassert>
 #include <memory>
+#include <span>
 #include <string_view>
 
 namespace Wx32
@@ -50,23 +51,19 @@ using U16PathBuffer = PathBufferBased<wchar_t>;
 
 namespace Wx32::Utils
 {
-// cvt utf8-string to utf16-string with allocting memory (heap memory)
-auto ApiStrCvt(const std::string_view& u8Str) -> WideStr_t;
+auto StrCvtForce(const std::string_view& u8Str, const CodePage eCodePage) -> WideStr_t;
+auto StrCvtForce(const std::wstring_view& u16Str, const CodePage eCodePage) -> MbcsStr_t;
+auto StrCvtForce(const std::string_view& u8Str, std::span<wchar_t> spBuffer, const CodePage eCodePage) -> std::wstring_view;
+auto StrCvtForce(const std::wstring_view& u16Str, std::span<char> spBuffer, const CodePage eCodePage) -> std::string_view;
 
-// cvt utf16-string to utf8-string with allocting memory (heap memory)
-auto ApiStrCvt(const std::wstring_view& u16Str) -> MbcsStr_t;
-
-// cvt utf8-string to utf16-string without allocting memory (stack memory or temp buffer)
-auto ApiStrCvt(const std::string_view& u8Str, U16PathBuffer& sfU16Buffer) -> std::wstring_view;
-
-// cvt utf16-string to utf8-string without allocting memory (stack memory or temp buffer)
-auto ApiStrCvt(const std::wstring_view& u16Str, U8PathBuffer& sfU8Buffer) -> std::string_view;
-
-// cvt wide-string to multibyte-string
+// cvt wide-string to multibyte-string with warning log
 auto StrCvt(const std::wstring_view& wsStr, const CodePage eCodePage) noexcept -> MbcsStr_t;
 
-// cvt multibyte-string to wide-string
+// cvt multibyte-string to wide-string with warning log
 auto StrCvt(const std::string_view& msStr, const CodePage eCodePage) noexcept -> WideStr_t;
+
+auto ApiStrCvt(const std::string_view& u8Str) -> WideStr_t;
+auto ApiStrCvt(const std::wstring_view& u16Str) -> MbcsStr_t;
 
 // u8string to string
 auto ForceU8Str(const std::u8string_view& msStr) -> std::string_view;

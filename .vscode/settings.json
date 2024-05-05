@@ -18,10 +18,9 @@
         "--background-index",
         "-j=16",
         "--clang-tidy",
-        "--clang-tidy-checks=cppcoreguidelines-*,performance-*,bugprone-*,portability-*,modernize-*,google-*",
         "--all-scopes-completion",
         "--completion-style=detailed",
-        "--header-insertion=iwyu",
+        "--header-insertion=never",
         "-compile-commands-dir=.vscode"
     ],
     // lldb

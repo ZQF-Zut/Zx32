@@ -14,6 +14,7 @@ set_allowedarchs("x86", "x64")
 set_allowedmodes("debug", "release")
 
 -- rules
+add_rules("plugin.vsxmake.autoupdate")
 add_rules("mode.debug", "mode.release")
 
 -- defines
