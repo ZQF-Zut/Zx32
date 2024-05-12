@@ -3,7 +3,7 @@
 
 namespace Wx32::Utils
 {
-auto StrCvtForce(const std::string_view& msStr, const CodePage eCodePage) -> WideStr_t
+auto StrCvtForce(const std::string_view msStr, const CodePage eCodePage) -> WideStr_t
 {
     if (msStr.empty()) { return { std::wstring_view{ L"", 0 }, nullptr }; }
     const auto char_count = static_cast<size_t>(::MultiByteToWideChar(static_cast<UINT>(eCodePage), MB_ERR_INVALID_CHARS, msStr.data(), static_cast<int>(msStr.size()), nullptr, 0));
@@ -14,7 +14,7 @@ auto StrCvtForce(const std::string_view& msStr, const CodePage eCodePage) -> Wid
     return { std::wstring_view{ buffer.get(), char_count_real }, std::move(buffer) };
 }
 
-auto StrCvtForce(const std::wstring_view& wsStr, const CodePage eCodePage) -> MbcsStr_t
+auto StrCvtForce(const std::wstring_view wsStr, const CodePage eCodePage) -> MbcsStr_t
 {
     if (wsStr.empty()) { return { std::string_view{ "", 0 }, nullptr }; }
     const auto bytes = static_cast<size_t>(::WideCharToMultiByte(static_cast<UINT>(eCodePage), 0, wsStr.data(), static_cast<int>(wsStr.size()), nullptr, 0, nullptr, nullptr));
@@ -25,7 +25,7 @@ auto StrCvtForce(const std::wstring_view& wsStr, const CodePage eCodePage) -> Mb
     return { std::string_view{ buffer.get(), bytes_real }, std::move(buffer) };
 }
 
-auto StrCvtForce(const std::string_view& msStr, std::span<wchar_t> spBuffer, const CodePage eCodePage) -> std::wstring_view
+auto StrCvtForce(const std::string_view msStr, std::span<wchar_t> spBuffer, const CodePage eCodePage) -> std::wstring_view
 {
     if (msStr.empty()) { return { L"", 0 }; }
     const auto char_count = static_cast<size_t>(::MultiByteToWideChar(static_cast<UINT>(eCodePage), MB_ERR_INVALID_CHARS, msStr.data(), static_cast<int>(msStr.size()), spBuffer.data(), static_cast<int>(spBuffer.size())));
@@ -34,7 +34,7 @@ auto StrCvtForce(const std::string_view& msStr, std::span<wchar_t> spBuffer, con
     return { spBuffer.data(), char_count };
 }
 
-auto StrCvtForce(const std::wstring_view& wsStr, std::span<char> spBuffer, const CodePage eCodePage) -> std::string_view
+auto StrCvtForce(const std::wstring_view wsStr, std::span<char> spBuffer, const CodePage eCodePage) -> std::string_view
 {
     if (wsStr.empty()) { return { "", 0 }; }
     const auto bytes = static_cast<size_t>(::WideCharToMultiByte(static_cast<UINT>(eCodePage), 0, reinterpret_cast<const wchar_t*>(wsStr.data()), static_cast<int>(wsStr.size()), spBuffer.data(), static_cast<int>(spBuffer.size()), nullptr, nullptr));
@@ -43,7 +43,7 @@ auto StrCvtForce(const std::wstring_view& wsStr, std::span<char> spBuffer, const
     return { spBuffer.data(), bytes };
 }
 
-auto StrCvtSafe(const std::wstring_view& wsStr, const CodePage eCodePage) -> MbcsStr_t
+auto StrCvtSafe(const std::wstring_view wsStr, const CodePage eCodePage) -> MbcsStr_t
 {
     // warning log func, print error msg/text to console via sys api
     auto fn_warning_log = [&wsStr](std::wstring_view const wsReason) {
@@ -59,7 +59,7 @@ auto StrCvtSafe(const std::wstring_view& wsStr, const CodePage eCodePage) -> Mbc
     // if src str is empty just return
     if (wsStr.empty()) 
     {
-        // let std::wstring_view reference the global string(null char string), avoiding memory allocation
+        // let std::string_view reference the global string(null char string), avoiding memory allocation
         return { std::string_view{ "", 0 }, nullptr };
     }
 
@@ -97,7 +97,7 @@ auto StrCvtSafe(const std::wstring_view& wsStr, const CodePage eCodePage) -> Mbc
     return { std::string_view{ buffer_ptr.get(), bytes_real }, std::move(buffer_ptr) };
 }
 
-auto StrCvtSafe(const std::string_view& msStr, const CodePage eCodePage) -> WideStr_t
+auto StrCvtSafe(const std::string_view msStr, const CodePage eCodePage) -> WideStr_t
 {
     // warning log func, print error msg/text to console via sys api
     auto fn_warning_log = [&msStr](std::string_view const msReason) {
@@ -143,27 +143,27 @@ auto StrCvtSafe(const std::string_view& msStr, const CodePage eCodePage) -> Wide
     return { std::wstring_view{ buffer_ptr.get(), char_count_real }, std::move(buffer_ptr) };
 }
 
-auto ApiStrCvt(const std::wstring_view& u16Str) -> MbcsStr_t
+auto ApiStrCvt(const std::wstring_view u16Str) -> MbcsStr_t
 {
     return StrCvtForce(u16Str, CodePage::UTF8);
 }
 
-auto ApiStrCvt(const std::string_view& u8Str) -> WideStr_t
+auto ApiStrCvt(const std::string_view u8Str) -> WideStr_t
 {
     return StrCvtForce(u8Str, CodePage::UTF8);
 }
 
-auto ApiStrCvt(const std::string_view& u8Str, std::span<wchar_t> spBuffer) -> std::wstring_view
+auto ApiStrCvt(const std::string_view u8Str, std::span<wchar_t> spBuffer) -> std::wstring_view
 {
     return StrCvtForce(u8Str, spBuffer, CodePage::UTF8);
 }
 
-auto ApiStrCvt(const std::wstring_view& u16Str, std::span<char> spBuffer) -> std::string_view
+auto ApiStrCvt(const std::wstring_view u16Str, std::span<char> spBuffer) -> std::string_view
 {
     return StrCvtForce(u16Str, spBuffer, CodePage::UTF8);
 }
 
-auto ForceU8Str(const std::u8string_view& msStr) -> std::string_view
+auto ForceU8Str(const std::u8string_view msStr) -> std::string_view
 {
     return { reinterpret_cast<const char*>(msStr.data()), msStr.size() };
 }

@@ -39,24 +39,21 @@ auto GetCurrentDirectoryU8() -> MbcsStr_t
 auto CreateFileU8(const std::string_view& u8FilePath, size_t dwDesiredAccess, size_t dwShareMode, LPSECURITY_ATTRIBUTES lpSecurityAttributes, size_t dwCreationDisposition, size_t dwFlagsAndAttributes, HANDLE hTemplateFile) -> std::optional<HANDLE>
 {
     HANDLE hfile = ::CreateFileW(Utils::ApiStrCvt(u8FilePath).first.data(), static_cast<DWORD>(dwDesiredAccess), static_cast<DWORD>(dwShareMode), lpSecurityAttributes, static_cast<DWORD>(dwCreationDisposition), static_cast<DWORD>(dwFlagsAndAttributes), hTemplateFile);
-    if (hfile == INVALID_HANDLE_VALUE) { return std::nullopt; }
-    return hfile;
+    return (hfile != INVALID_HANDLE_VALUE) ? std::optional<HANDLE>{ hfile } : std::nullopt;
 }
 
 auto WriteFile(HANDLE hFile, std::span<const uint8_t> spData, LPOVERLAPPED lpOverlapped) -> std::optional<size_t>
 {
     DWORD written{};
     bool status = (::WriteFile(hFile, spData.data(), static_cast<DWORD>(spData.size()), &written, lpOverlapped) == TRUE);
-    if (!status) { return std::nullopt; }
-    return static_cast<size_t>(written);
+    return status ? std::optional<size_t>{ static_cast<size_t>(written) } : std::nullopt;
 }
 
 auto ReadFile(HANDLE hFile, std::span<uint8_t> spBuffer, LPOVERLAPPED lpOverlapped) -> std::optional<size_t>
 {
     DWORD read{};
     bool status = (::ReadFile(hFile, spBuffer.data(), static_cast<DWORD>(spBuffer.size()), &read, lpOverlapped) == TRUE);
-    if (!status) { return std::nullopt; }
-    return static_cast<size_t>(read);
+    return status ? std::optional<size_t>{ static_cast<size_t>(read) } : std::nullopt;
 }
 
 auto GetFileSizeEx(HANDLE hFile) -> std::optional<uint64_t>
@@ -71,8 +68,7 @@ auto SetFilePointerEx(HANDLE hFile, uint64_t nOffset, size_t dwMoveMethod) -> st
     LARGE_INTEGER new_file_pointer;
     LARGE_INTEGER move_distance = { .QuadPart = static_cast<LONGLONG>((nOffset)) };
     bool status = (::SetFilePointerEx(hFile, move_distance, &new_file_pointer, static_cast<DWORD>(dwMoveMethod)) == TRUE);
-    if (!status) { return std::nullopt; }
-    return static_cast<uint64_t>(new_file_pointer.QuadPart);
+    return status ? std::optional<uint64_t>{ static_cast<uint64_t>(new_file_pointer.QuadPart) } : std::nullopt;
 }
 
 auto CloseHandle(HANDLE hFile) -> bool
@@ -120,7 +116,6 @@ auto WriteConsoleU8(HANDLE hConsoleOutput, const std::string_view& u8Text, void*
     DWORD written{};
     auto text_wstr = Utils::ApiStrCvt(u8Text);
     bool status = (::WriteConsoleW(hConsoleOutput, text_wstr.first.data(), static_cast<DWORD>(text_wstr.first.size()), &written, lpReserved) == TRUE);
-    if (!status) { return std::nullopt; }
-    return static_cast<size_t>(written);
+    return status ? std::optional<size_t>{ static_cast<size_t>(written) } : std::nullopt;
 }
 } // namespace Wx32::Kernel32
