@@ -3,41 +3,41 @@
 
 namespace Wx32::Utils
 {
-auto StrCvtForce(const std::string_view& u8Str, const CodePage eCodePage) -> WideStr_t
+auto StrCvtForce(const std::string_view& msStr, const CodePage eCodePage) -> WideStr_t
 {
-    if (u8Str.empty()) { return { std::wstring_view{ L"", 0 }, nullptr }; }
-    const auto char_count = static_cast<size_t>(::MultiByteToWideChar(static_cast<UINT>(eCodePage), MB_ERR_INVALID_CHARS, u8Str.data(), static_cast<int>(u8Str.size()), nullptr, 0));
+    if (msStr.empty()) { return { std::wstring_view{ L"", 0 }, nullptr }; }
+    const auto char_count = static_cast<size_t>(::MultiByteToWideChar(static_cast<UINT>(eCodePage), MB_ERR_INVALID_CHARS, msStr.data(), static_cast<int>(msStr.size()), nullptr, 0));
     if (char_count == 0) { return { std::wstring_view{ L"", 0 }, nullptr }; }
     auto buffer = std::make_unique_for_overwrite<wchar_t[]>(char_count + 1);
-    const auto char_count_real = static_cast<size_t>(::MultiByteToWideChar(static_cast<UINT>(eCodePage), MB_ERR_INVALID_CHARS, u8Str.data(), static_cast<int>(u8Str.size()), buffer.get(), static_cast<int>(char_count)));
+    const auto char_count_real = static_cast<size_t>(::MultiByteToWideChar(static_cast<UINT>(eCodePage), MB_ERR_INVALID_CHARS, msStr.data(), static_cast<int>(msStr.size()), buffer.get(), static_cast<int>(char_count)));
     buffer[char_count_real] = {};
     return { std::wstring_view{ buffer.get(), char_count_real }, std::move(buffer) };
 }
 
-auto StrCvtForce(const std::wstring_view& u16Str, const CodePage eCodePage) -> MbcsStr_t
+auto StrCvtForce(const std::wstring_view& wsStr, const CodePage eCodePage) -> MbcsStr_t
 {
-    if (u16Str.empty()) { return { std::string_view{ "", 0 }, nullptr }; }
-    const auto bytes = static_cast<size_t>(::WideCharToMultiByte(static_cast<UINT>(eCodePage), 0, u16Str.data(), static_cast<int>(u16Str.size()), nullptr, 0, nullptr, nullptr));
+    if (wsStr.empty()) { return { std::string_view{ "", 0 }, nullptr }; }
+    const auto bytes = static_cast<size_t>(::WideCharToMultiByte(static_cast<UINT>(eCodePage), 0, wsStr.data(), static_cast<int>(wsStr.size()), nullptr, 0, nullptr, nullptr));
     if (bytes == 0) { return { std::string_view{ "", 0 }, nullptr }; }
     auto buffer = std::make_unique_for_overwrite<char[]>(bytes + 1);
-    const auto bytes_real = static_cast<size_t>(::WideCharToMultiByte(static_cast<UINT>(eCodePage), 0, reinterpret_cast<const wchar_t*>(u16Str.data()), static_cast<int>(u16Str.size()), buffer.get(), static_cast<int>(bytes), nullptr, nullptr));
+    const auto bytes_real = static_cast<size_t>(::WideCharToMultiByte(static_cast<UINT>(eCodePage), 0, reinterpret_cast<const wchar_t*>(wsStr.data()), static_cast<int>(wsStr.size()), buffer.get(), static_cast<int>(bytes), nullptr, nullptr));
     buffer[bytes_real] = {};
     return { std::string_view{ buffer.get(), bytes_real }, std::move(buffer) };
 }
 
-auto StrCvtForce(const std::string_view& u8Str, std::span<wchar_t> spBuffer, const CodePage eCodePage) -> std::wstring_view
+auto StrCvtForce(const std::string_view& msStr, std::span<wchar_t> spBuffer, const CodePage eCodePage) -> std::wstring_view
 {
-    if (u8Str.empty()) { return { L"", 0 }; }
-    const auto char_count = static_cast<size_t>(::MultiByteToWideChar(static_cast<UINT>(eCodePage), MB_ERR_INVALID_CHARS, u8Str.data(), static_cast<int>(u8Str.size()), spBuffer.data(), static_cast<int>(spBuffer.size())));
+    if (msStr.empty()) { return { L"", 0 }; }
+    const auto char_count = static_cast<size_t>(::MultiByteToWideChar(static_cast<UINT>(eCodePage), MB_ERR_INVALID_CHARS, msStr.data(), static_cast<int>(msStr.size()), spBuffer.data(), static_cast<int>(spBuffer.size())));
     if ((char_count == 0) || (char_count >= spBuffer.size())) { throw std::runtime_error("ApiStrCvt: buffer too small"); }
     spBuffer[char_count] = {};
     return { spBuffer.data(), char_count };
 }
 
-auto StrCvtForce(const std::wstring_view& u16Str, std::span<char> spBuffer, const CodePage eCodePage) -> std::string_view
+auto StrCvtForce(const std::wstring_view& wsStr, std::span<char> spBuffer, const CodePage eCodePage) -> std::string_view
 {
-    if (u16Str.empty()) { return { "", 0 }; }
-    const auto bytes = static_cast<size_t>(::WideCharToMultiByte(static_cast<UINT>(eCodePage), 0, reinterpret_cast<const wchar_t*>(u16Str.data()), static_cast<int>(u16Str.size()), spBuffer.data(), static_cast<int>(spBuffer.size()), nullptr, nullptr));
+    if (wsStr.empty()) { return { "", 0 }; }
+    const auto bytes = static_cast<size_t>(::WideCharToMultiByte(static_cast<UINT>(eCodePage), 0, reinterpret_cast<const wchar_t*>(wsStr.data()), static_cast<int>(wsStr.size()), spBuffer.data(), static_cast<int>(spBuffer.size()), nullptr, nullptr));
     if ((bytes == 0) || (bytes >= spBuffer.size())) { throw std::runtime_error("ApiStrCvt: buffer too small"); }
     spBuffer[bytes] = {};
     return { spBuffer.data(), bytes };
@@ -48,6 +48,7 @@ auto StrCvtSafe(const std::wstring_view& wsStr, const CodePage eCodePage) -> Mbc
     auto fn_warning_log = [&wsStr](const std::wstring_view wsReason) {
         DWORD written{};
         const HANDLE handle = ::GetStdHandle(STD_ERROR_HANDLE);
+        if (handle == INVALID_HANDLE_VALUE) { return; }
         ::WriteConsoleW(handle, wsReason.data(), static_cast<DWORD>(wsReason.size()), &written, nullptr);
         ::WriteConsoleW(handle, L"---> ", 5, &written, nullptr);
         ::WriteConsoleW(handle, wsStr.data(), static_cast<DWORD>(wsStr.size()), &written, nullptr);
@@ -82,6 +83,7 @@ auto StrCvtSafe(const std::string_view& msStr, const CodePage eCodePage) -> Wide
     auto fn_warning_log = [&msStr](const std::string_view msReason) {
         DWORD written{};
         const HANDLE handle = ::GetStdHandle(STD_ERROR_HANDLE);
+        if (handle == INVALID_HANDLE_VALUE) { return; }
         ::WriteConsoleA(handle, msReason.data(), static_cast<DWORD>(msReason.size()), &written, nullptr);
         ::WriteConsoleW(handle, L"---> ", 5, &written, nullptr);
         ::WriteConsoleA(handle, msStr.data(), static_cast<DWORD>(msStr.size()), &written, nullptr);
