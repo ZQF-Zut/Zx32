@@ -45,7 +45,8 @@ auto StrCvtForce(const std::wstring_view& wsStr, std::span<char> spBuffer, const
 
 auto StrCvtSafe(const std::wstring_view& wsStr, const CodePage eCodePage) -> MbcsStr_t
 {
-    auto fn_warning_log = [&wsStr](const std::wstring_view wsReason) {
+    // warning log func, print error msg/text to console via sys api
+    auto fn_warning_log = [&wsStr](std::wstring_view const wsReason) {
         DWORD written{};
         const HANDLE handle = ::GetStdHandle(STD_ERROR_HANDLE);
         if (handle == INVALID_HANDLE_VALUE) { return; }
@@ -55,32 +56,51 @@ auto StrCvtSafe(const std::wstring_view& wsStr, const CodePage eCodePage) -> Mbc
         ::WriteConsoleW(handle, L"\n\n", 2, &written, nullptr);
     };
 
-    if (wsStr.empty()) { return { std::string_view{ "", 0 }, nullptr }; }
-
-    BOOL not_all_cvt = TRUE;
-    const auto bytes = static_cast<size_t>(::WideCharToMultiByte(static_cast<UINT>(eCodePage), 0, wsStr.data(), static_cast<int>(wsStr.size()), nullptr, 0, nullptr, &not_all_cvt));
-
-    if (bytes == 0)
+    // if src str is empty just return
+    if (wsStr.empty()) 
     {
-        fn_warning_log(L"[Warning] MBCStr: convert WideChar to MBCS error!\n");
+        // let std::wstring_view reference the global string(null char string), avoiding memory allocation
         return { std::string_view{ "", 0 }, nullptr };
     }
 
-    if (not_all_cvt == TRUE)
+    // flag for if missing chars
+    BOOL not_all_cvt = TRUE;
+
+    // try count multi-bytes string bytes (exclude null char)
+    const auto bytes = static_cast<size_t>(::WideCharToMultiByte(static_cast<UINT>(eCodePage), 0, wsStr.data(), static_cast<int>(wsStr.size()), nullptr, 0, nullptr, &not_all_cvt));
+
+    // if char count == 0 that means the cvt failed
+    if (bytes == 0)
     {
-        fn_warning_log(L"[Warning] MBCStr: convert WideChar to MBCS missing char!\n");
+        fn_warning_log(L"[Warning] StrCvtSafe: convert WideChar to MBCS error!\n");
+
+        // let std::string_view reference the global string(null char string), avoiding memory allocation
+        return { std::string_view{ "", 0 }, nullptr };
     }
 
+    // if missing chars show a msg
+    if (not_all_cvt == TRUE)
+    {
+        fn_warning_log(L"[Warning] StrCvtSafe: convert WideChar to MBCS missing chars!\n");
+    }
+
+    // make unique ptr but not initialize the buffer
     auto buffer_ptr = std::make_unique_for_overwrite<char[]>(bytes + 1);
+
+    // write data to buffer
     const auto bytes_real = static_cast<size_t>(::WideCharToMultiByte(static_cast<UINT>(eCodePage), 0, reinterpret_cast<const wchar_t*>(wsStr.data()), static_cast<int>(wsStr.size()), buffer_ptr.get(), static_cast<int>(bytes), nullptr, &not_all_cvt));
+    
+    // add null char to the end
     buffer_ptr.get()[bytes_real] = {};
+
+     // return pair
     return { std::string_view{ buffer_ptr.get(), bytes_real }, std::move(buffer_ptr) };
 }
 
 auto StrCvtSafe(const std::string_view& msStr, const CodePage eCodePage) -> WideStr_t
 {
     // warning log func, print error msg/text to console via sys api
-    auto fn_warning_log = [&msStr](const std::string_view msReason) {
+    auto fn_warning_log = [&msStr](std::string_view const msReason) {
         DWORD written{};
         const HANDLE handle = ::GetStdHandle(STD_ERROR_HANDLE);
         if (handle == INVALID_HANDLE_VALUE) { return; }
@@ -93,8 +113,7 @@ auto StrCvtSafe(const std::string_view& msStr, const CodePage eCodePage) -> Wide
     // if src str is empty just return
     if (msStr.empty())
     {
-        // let std::wstring_view reference the global string(null char string),
-        // avoiding Memory allocation
+        // let std::wstring_view reference the global string(null char string), avoiding memory allocation
         return { std::wstring_view{ L"", 0 }, nullptr };
     }
 
@@ -105,7 +124,7 @@ auto StrCvtSafe(const std::string_view& msStr, const CodePage eCodePage) -> Wide
     if (char_count == 0)
     {
         // show some information for user
-        fn_warning_log("[Warning] WideStr: convert MBCS to WideChar error!\n");
+        fn_warning_log("[Warning] StrCvtSafe: convert MBCS to WideChar error!\n");
 
         // again avoiding Memory allocation
         return { std::wstring_view{ L"", 0 }, nullptr };
