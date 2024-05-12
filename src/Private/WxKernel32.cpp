@@ -59,6 +59,13 @@ auto ReadFile(HANDLE hFile, std::span<uint8_t> spBuffer, LPOVERLAPPED lpOverlapp
     return static_cast<size_t>(read);
 }
 
+auto GetFileSizeEx(HANDLE hFile) -> std::optional<uint64_t>
+{
+    LARGE_INTEGER file_size{};
+    ::GetFileSizeEx(hFile, &file_size);
+    return static_cast<uint64_t>(file_size.QuadPart);
+}
+
 auto SetFilePointerEx(HANDLE hFile, uint64_t nOffset, size_t dwMoveMethod) -> std::optional<uint64_t>
 {
     LARGE_INTEGER new_file_pointer;
@@ -66,6 +73,16 @@ auto SetFilePointerEx(HANDLE hFile, uint64_t nOffset, size_t dwMoveMethod) -> st
     bool status = (::SetFilePointerEx(hFile, move_distance, &new_file_pointer, static_cast<DWORD>(dwMoveMethod)) == TRUE);
     if (!status) { return std::nullopt; }
     return static_cast<uint64_t>(new_file_pointer.QuadPart);
+}
+
+auto CloseHandle(HANDLE hFile) -> bool
+{
+    return ::CloseHandle(hFile) == TRUE;
+}
+
+auto FlushFileBuffers(HANDLE hFile) -> bool
+{
+    return ::FlushFileBuffers(hFile) == TRUE;
 }
 
 auto CreateDirectoryU8(const std::string_view& u8DirName, LPSECURITY_ATTRIBUTES lpSecurityAttributes) -> bool
