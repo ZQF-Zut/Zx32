@@ -42,17 +42,17 @@ auto CreateFileU8(const std::string_view& u8FilePath, size_t dwDesiredAccess, si
     return (hfile != INVALID_HANDLE_VALUE) ? std::optional<HANDLE>{ hfile } : std::nullopt;
 }
 
-auto WriteFile(HANDLE hFile, std::span<const uint8_t> spData, LPOVERLAPPED lpOverlapped) -> std::optional<size_t>
+auto WriteFile(HANDLE hFile, std::span<uint8_t> spData, LPOVERLAPPED lpOverlapped) -> std::optional<size_t>
 {
     DWORD written{};
-    bool status = (::WriteFile(hFile, spData.data(), static_cast<DWORD>(spData.size()), &written, lpOverlapped) == TRUE);
+    bool status = (::WriteFile(hFile, spData.data(), static_cast<DWORD>(spData.size()), &written, lpOverlapped) != FALSE);
     return status ? std::optional<size_t>{ static_cast<size_t>(written) } : std::nullopt;
 }
 
 auto ReadFile(HANDLE hFile, std::span<uint8_t> spBuffer, LPOVERLAPPED lpOverlapped) -> std::optional<size_t>
 {
     DWORD read{};
-    bool status = (::ReadFile(hFile, spBuffer.data(), static_cast<DWORD>(spBuffer.size()), &read, lpOverlapped) == TRUE);
+    bool status = (::ReadFile(hFile, spBuffer.data(), static_cast<DWORD>(spBuffer.size()), &read, lpOverlapped) != FALSE);
     return status ? std::optional<size_t>{ static_cast<size_t>(read) } : std::nullopt;
 }
 
@@ -67,28 +67,28 @@ auto SetFilePointerEx(HANDLE hFile, uint64_t nOffset, size_t dwMoveMethod) -> st
 {
     LARGE_INTEGER new_file_pointer;
     LARGE_INTEGER move_distance = { .QuadPart = static_cast<LONGLONG>((nOffset)) };
-    bool status = (::SetFilePointerEx(hFile, move_distance, &new_file_pointer, static_cast<DWORD>(dwMoveMethod)) == TRUE);
+    bool status = (::SetFilePointerEx(hFile, move_distance, &new_file_pointer, static_cast<DWORD>(dwMoveMethod)) != FALSE);
     return status ? std::optional<uint64_t>{ static_cast<uint64_t>(new_file_pointer.QuadPart) } : std::nullopt;
 }
 
 auto CloseHandle(HANDLE hFile) -> bool
 {
-    return ::CloseHandle(hFile) == TRUE;
+    return ::CloseHandle(hFile) != FALSE;
 }
 
 auto FlushFileBuffers(HANDLE hFile) -> bool
 {
-    return ::FlushFileBuffers(hFile) == TRUE;
+    return ::FlushFileBuffers(hFile) != FALSE;
 }
 
 auto CreateDirectoryU8(const std::string_view& u8DirName, LPSECURITY_ATTRIBUTES lpSecurityAttributes) -> bool
 {
-    return ::CreateDirectoryW(Utils::ApiStrCvt(u8DirName).first.data(), lpSecurityAttributes) == TRUE;
+    return ::CreateDirectoryW(Utils::ApiStrCvt(u8DirName).first.data(), lpSecurityAttributes) != FALSE;
 }
 
 auto RemoveDirectoryU8(const std::string_view& u8DirName) -> bool
 {
-    return ::RemoveDirectoryW(Utils::ApiStrCvt(u8DirName).first.data()) == TRUE;
+    return ::RemoveDirectoryW(Utils::ApiStrCvt(u8DirName).first.data()) != FALSE;
 }
 
 auto GetFileAttributesU8(const std::string_view& u8Path) -> size_t
@@ -98,24 +98,24 @@ auto GetFileAttributesU8(const std::string_view& u8Path) -> size_t
 
 auto DeleteFileU8(const std::string_view& u8FilePath) -> bool
 {
-    return ::DeleteFileW(Utils::ApiStrCvt(u8FilePath).first.data()) == TRUE;
+    return ::DeleteFileW(Utils::ApiStrCvt(u8FilePath).first.data()) != FALSE;
 }
 
 auto CopyFileU8(const std::string_view& u8ExistFilePath, const std::string_view& u8NewFilePath, bool bFailIfExists) -> bool
 {
-    return ::CopyFileW(Utils::ApiStrCvt(u8ExistFilePath).first.data(), Utils::ApiStrCvt(u8NewFilePath).first.data(), bFailIfExists ? TRUE : FALSE) == TRUE;
+    return ::CopyFileW(Utils::ApiStrCvt(u8ExistFilePath).first.data(), Utils::ApiStrCvt(u8NewFilePath).first.data(), bFailIfExists ? TRUE : FALSE) != FALSE;
 }
 
 auto MoveFileU8(const std::string_view& u8ExistFilePath, const std::string_view& u8NewFilePath) -> bool
 {
-    return ::MoveFileW(Utils::ApiStrCvt(u8ExistFilePath).first.data(), Utils::ApiStrCvt(u8NewFilePath).first.data()) == TRUE;
+    return ::MoveFileW(Utils::ApiStrCvt(u8ExistFilePath).first.data(), Utils::ApiStrCvt(u8NewFilePath).first.data()) != FALSE;
 }
 
 auto WriteConsoleU8(HANDLE hConsoleOutput, const std::string_view& u8Text, void* lpReserved) -> std::optional<size_t>
 {
     DWORD written{};
     auto text_wstr = Utils::ApiStrCvt(u8Text);
-    bool status = (::WriteConsoleW(hConsoleOutput, text_wstr.first.data(), static_cast<DWORD>(text_wstr.first.size()), &written, lpReserved) == TRUE);
+    bool status = (::WriteConsoleW(hConsoleOutput, text_wstr.first.data(), static_cast<DWORD>(text_wstr.first.size()), &written, lpReserved) != FALSE);
     return status ? std::optional<size_t>{ static_cast<size_t>(written) } : std::nullopt;
 }
 } // namespace Wx32::Kernel32

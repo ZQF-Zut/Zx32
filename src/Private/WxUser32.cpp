@@ -4,7 +4,7 @@ namespace Wx32::User32
 {
 auto SetWindowTextU8(HWND hWnd, const std::string_view& u8Text) -> bool
 {
-    return ::SetWindowTextW(hWnd, Utils::ApiStrCvt(u8Text).first.data()) == TRUE;
+    return ::SetWindowTextW(hWnd, Utils::ApiStrCvt(u8Text).first.data()) != FALSE;
 }
 
 auto MessageBoxU8(HWND hWnd, const std::string_view& u8Title, const std::string_view& u8Text, size_t uType) -> size_t
