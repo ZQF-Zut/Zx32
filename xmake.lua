@@ -5,7 +5,7 @@ set_description("a win32 api wrapper using utf-8 and modern c++")
 
 -- language
 set_warnings("all")
-set_languages("c++20")
+set_languages("c++23")
 set_encodings("utf-8")
 
 -- allows
