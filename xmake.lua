@@ -1,5 +1,5 @@
 -- project
-set_project("wx32")
+set_project("zx32")
 set_xmakever("2.8.9")
 set_description("a win32 api wrapper using utf-8 and modern c++")
 
@@ -28,7 +28,7 @@ if is_mode("releasedbg") or is_mode("release") then
 end
 
 -- targets
-target("wx32")
+target("zx32")
     set_kind("$(kind)")
     if is_plat("windows") then
         if is_kind("shared") then
@@ -41,8 +41,8 @@ target("wx32")
     add_includedirs("include", {public = true})
     add_headerfiles("include/(**.h)")
 
-target("wx32-test")
+target("zx32-test")
     set_default(false)
     set_kind("binary")
     add_files("test/main.cpp")
-    add_deps("wx32")
+    add_deps("zx32")

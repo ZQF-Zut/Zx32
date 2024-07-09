@@ -1,6 +1,10 @@
 # Xmake cache
 .xmake/
 build/
+vsxmake2022/
+
+# VS
+.vs/
 
 # VSCode
 .vscode/.cache/
@@ -9,5 +13,3 @@ build/
 # MacOS Cache
 .DS_Store
 
-
-/vsxmake2022
