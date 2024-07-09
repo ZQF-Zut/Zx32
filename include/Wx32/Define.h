@@ -11,8 +11,8 @@
 
 namespace Wx32
 {
-	using MbcsStr_t = std::pair<std::string_view, std::unique_ptr<char[]>>;
-	using WideStr_t = std::pair<std::wstring_view, std::unique_ptr<wchar_t[]>>;
+	using MbcsStr_t = std::pair<std::basic_string_view<char>, std::unique_ptr<char[]>>;
+	using WideStr_t = std::pair<std::basic_string_view<wchar_t>, std::unique_ptr<wchar_t[]>>;
 
 	template <class Char_t>
 	class PathBufferBased
