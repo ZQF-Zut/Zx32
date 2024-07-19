@@ -21,3 +21,10 @@ add_library(Zut::Zx32 ALIAS "${PROJECT_NAME}")
 target_include_directories("${PROJECT_NAME}" PUBLIC "include")
 target_compile_features("${PROJECT_NAME}" PRIVATE cxx_std_23)
 target_compile_options("${PROJECT_NAME}" PRIVATE "$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
+
+# Warning
+if(MSVC)
+    target_compile_options("${PROJECT_NAME}" PRIVATE /W4)
+else()
+    target_compile_options("${PROJECT_NAME}" PRIVATE -Wall -Wextra)
+endif()

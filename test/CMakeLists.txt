@@ -7,3 +7,10 @@ target_compile_options("${PROJECT_NAME}" PRIVATE "$<$<CXX_COMPILER_ID:MSVC>:/utf
 
 # Add Library
 target_link_libraries("${PROJECT_NAME}" PRIVATE Zut::Zx32)
+
+# Warning
+if(MSVC)
+    target_compile_options("${PROJECT_NAME}" PRIVATE /W4)
+else()
+    target_compile_options("${PROJECT_NAME}" PRIVATE -Wall -Wextra)
+endif()
