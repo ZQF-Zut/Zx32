@@ -1,5 +1,5 @@
 # Zx32
-a win32 api wrapper using utf-8 and modern c++
+Win32 API UTF8 Wrapper
 
 ## Build
 - xmake
